@@ -7,6 +7,13 @@ async function main() {
 
 	console.log("Contract deployed to:", messageStorageContract.address);
 	console.log("Contract deployed by:", owner.address);
+
+	let message = await messageStorageContract.get();
+	console.log("Current message:", message);
+
+	await messageStorageContract.update("Goodby, Goodby!");
+	let newMessage = await messageStorageContract.get();
+	console.log("New message:", newMessage);
 }
 
 main()

@@ -1,4 +1,5 @@
 require("@nomiclabs/hardhat-waffle");
+require("hardhat-gas-reporter");
 require("dotenv").config();
 
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
