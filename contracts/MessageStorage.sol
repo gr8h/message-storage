@@ -30,7 +30,8 @@ contract MessageStorage {
         return msg.sender == owner;
     }
 
-    function update(string memory newMessage) public onlyOwner {
+	// Storing information inside calldata is always less expensive than storing it on memory
+    function update(string calldata newMessage) public onlyOwner {
         string memory oldMsg = message;
         message = newMessage;
         emit UpdatedMessages(oldMsg, newMessage);
