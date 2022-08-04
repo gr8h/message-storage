@@ -13,9 +13,12 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 module.exports = {
   solidity: "0.8.10",
   networks: {
-    ropsten: {
-      url: process.env.DEV_ROPSTEN_KEY,
+    rinkeby: {
+      chainId: 4,
+      url: process.env.DEV_RINKEBY_KEY,
       accounts: [process.env.PRIVATE_KEY],
+      gas: 2100000,
+      gasPrice: 8000000000
     },
     mainnet: {
       chainId: 1,

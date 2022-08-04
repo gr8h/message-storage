@@ -6,7 +6,7 @@ async function main() {
     console.log("Deployer account balance: ", accountBalance.toString());
 
 	const messageStorageContractFactory = await hre.ethers.getContractFactory("MessageStorage");
-	const messageStorageContract = await messageStorageContractFactory.deploy("Hello, Hello!");
+	const messageStorageContract = await messageStorageContractFactory.deploy();
 
 	await messageStorageContract.deployed();
 

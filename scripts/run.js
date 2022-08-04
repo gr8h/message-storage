@@ -1,19 +1,21 @@
 async function main() {
-	const [owner, randomPerson] = await hre.ethers.getSigners();
+
 	const messageStorageContractFactory = await hre.ethers.getContractFactory("MessageStorage");
-	const messageStorageContract = await messageStorageContractFactory.deploy("Hello, Hello!");
-
-	await messageStorageContract.deployed();
-
+	const messageStorageContract = await messageStorageContractFactory.attach(
+		"0xe456466336D2ab1744495a381Fc181B40e85887b" // The deployed contract address
+	);
 	console.log("Contract deployed to:", messageStorageContract.address);
-	console.log("Contract deployed by:", owner.address);
 
-	let message = await messageStorageContract.get();
-	console.log("Current message:", message);
+	let linkbalance = await messageStorageContract.linkBalance();
+	console.log("Balance:", linkbalance.toString());
 
-	await messageStorageContract.update("Goodby, Goodby!");
-	let newMessage = await messageStorageContract.get();
-	console.log("New message:", newMessage);
+	//let requestId = await messageStorageContract.requestVolumeData();
+	//console.log("RequestId:", requestId);
+
+	//let message = await messageStorageContract.get();
+	//console.log("Current message:", message);
+
+	//await messageStorageContract.withdrawLink();
 }
 
 main()
