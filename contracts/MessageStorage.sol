@@ -10,7 +10,7 @@ contract MessageStorage is ChainlinkClient, ConfirmedOwner{
     using Chainlink for Chainlink.Request;
 
     // Variables
-    bytes public data;
+    bytes public message;
 
     bytes32 private jobId;
     uint256 private fee;
@@ -19,30 +19,29 @@ contract MessageStorage is ChainlinkClient, ConfirmedOwner{
     event UpdatedMessages(bytes32 indexed requestId, bytes message);
 
     // Functions
-    constructor() ConfirmedOwner(msg.sender) {
+    constructor(address _chainlinkToken, address _chainlinkOracle, string memory _jobId) ConfirmedOwner(msg.sender) {
         
-        setChainlinkToken(0x01BE23585060835E02B77ef475b0Cc51aA1e0709);
-        setChainlinkOracle(0x188b71C9d27cDeE01B9b0dfF5C1aff62E8D6F434);
-        jobId = 'a84b561bd8f64300a0832682f208321f';
+        setChainlinkToken(_chainlinkToken);
+        setChainlinkOracle(_chainlinkOracle);
+        jobId = stringToBytes32(_jobId);
         fee = ((1 * LINK_DIVISIBILITY) / 100) * 5; // 0.05LINK
-
-        console.log("Deploying a MessageStorage with message:");
     }
 
-    function update() public returns (bytes32 requestId) {
-        Chainlink.Request memory req = buildChainlinkRequest(jobId, address(this), this.fulfill.selector);
+    function updateMessage(string memory _url, string memory _path) public onlyOwner returns (bytes32 requestId) {
+        Chainlink.Request memory req = buildChainlinkRequest(jobId, address(this), this.returnedMessage.selector);
+
         // Set the URL to perform the GET request on
-        req.add('get', 'https://catfact.ninja/fact?max_length=32');
-        req.add('path', 'fact');
+        req.add('get', _url);
+        req.add('path', _path);
         
         // Sends the request
         return sendOperatorRequest(req, fee);
     }
 
-    function fulfill(bytes32 _requestId, bytes memory _data) public recordChainlinkFulfillment(_requestId) {
-        data = _data;
+    function returnedMessage(bytes32 _requestId, bytes memory _message) public recordChainlinkFulfillment(_requestId) {
+        message = _message;
 
-        emit UpdatedMessages(_requestId, _data);
+        emit UpdatedMessages(_requestId, _message);
     }
 
     function linkBalance() public view onlyOwner returns(uint256){
@@ -56,6 +55,20 @@ contract MessageStorage is ChainlinkClient, ConfirmedOwner{
     }
 
     function get() public view returns (string memory) {
-        return string(data);
+        return string(message);
+    }
+
+    // Private
+    function stringToBytes32(string memory source) private pure returns (bytes32 result)
+    {
+        bytes memory tempEmptyStringTest = bytes(source);
+        if (tempEmptyStringTest.length == 0) {
+            return 0x0;
+        }
+
+        assembly {
+            // solhint-disable-line no-inline-assembly
+            result := mload(add(source, 32))
+        }
     }
 }

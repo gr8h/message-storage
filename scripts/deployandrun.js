@@ -8,15 +8,13 @@ async function main() {
 	console.log("Contract deployed to:", messageStorageContract.address);
 	console.log("Contract deployed by:", owner.address);
 
-	let requestId = await messageStorageContract.requestVolumeData();
+	let linkbalance = await messageStorageContract.linkBalance();
+	console.log("Balance:", linkbalance.toString());
+
+	let requestId = await messageStorageContract.update();
 	console.log("RequestId:", requestId);
 
 	let message = await messageStorageContract.get();
-	console.log("Current message:", message);
-
-	setTimeout(() => { console.log("wait!"); }, 5000);
-
-	message = await messageStorageContract.get();
 	console.log("Current message:", message);
 }
 
