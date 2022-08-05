@@ -62,8 +62,12 @@ describe("MessageStorage", function () {
   it("Default message should have a value", async function () {
     //Before we can do an API request, we need to fund it with LINK
     await linkContract.transfer(messageStorageContract.address, '50000000000000000')
+    
+    // Validate the balance
     let balanceBefore = await messageStorageContract.linkBalance();
     expect(balanceBefore).to.equal('50000000000000000');
+
+    // Call updateMessage & validate message
     let _url = process.env.EXTERNAL_API_URL;
     let _path = process.env.EXTERNAL_API_PATH;
 
@@ -74,6 +78,9 @@ describe("MessageStorage", function () {
   });
 
   it("Reverts: Owner should be the only one to update the message", async function () {
+    //Before we can do an API request, we need to fund it with LINK
+    await linkContract.transfer(messageStorageContract.address, '50000000000000000')
+
     let _url = process.env.EXTERNAL_API_URL;
     let _path = process.env.EXTERNAL_API_PATH;
 
@@ -98,5 +105,21 @@ describe("MessageStorage", function () {
     let balanceAfter = await messageStorageContract.linkBalance();
 
     expect(balanceBefore).to.equal(balanceAfter);
+  });
+
+  it("Withdraw balance should be zero", async function () {
+    //Before we can do an API request, we need to fund it with LINK
+    await linkContract.transfer(messageStorageContract.address, '50000000000000000')
+    
+    // Validate the balance
+    let balanceBefore = await messageStorageContract.linkBalance();
+    expect(balanceBefore).to.equal('50000000000000000');
+
+    // Withdraw
+    await messageStorageContract.withdrawLink()
+
+    let balanceAfter = await messageStorageContract.linkBalance();
+
+    expect(balanceAfter).to.equal('0');
   });
 });

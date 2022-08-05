@@ -51,7 +51,8 @@ contract MockMessageStorage is ChainlinkClient, ConfirmedOwner{
     }
 
     function withdrawLink() public onlyOwner {
-
+        LinkTokenInterface link = LinkTokenInterface(chainlinkTokenAddress());
+        require(link.transfer(msg.sender, link.balanceOf(address(this))), 'Unable to transfer');
     }
 
     function get() public view returns (string memory) {
