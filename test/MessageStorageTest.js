@@ -7,7 +7,7 @@ const EVM_Only_Owner =
 const EVM_Insufficient_Balance =
   "VM Exception while processing transaction: reverted with reason string 'Insufficient LINK Balance'";
 
-describe("MessageStorage", function () {
+describe("MessageStorage Contract test", function () {
   let owner, addr1;
   let messageStorageContract;
   let linkContract;
@@ -34,92 +34,121 @@ describe("MessageStorage", function () {
     );
   });
 
-  it("Default message should be empty", async function () {
-    let balanceBefore = await messageStorageContract.linkBalance();
-    expect(balanceBefore).to.equal(0);
+  describe("Given Insufficient LINK Balanace", () => {
+    describe("When checking the message", () => {
+      it("Message should be empty", async function () {
+        let balanceBefore = await messageStorageContract.linkBalance();
+        expect(balanceBefore).to.equal(0);
 
-    let message = await messageStorageContract.get();
+        let message = await messageStorageContract.get();
 
-    expect(message).to.equal("");
+        expect(message).to.equal("");
+      });
+    });
+
+    describe("When trying to update the message", () => {
+      it("Should reverts, Insufficient LINK Balanace", async function () {
+        let balanceBefore = await messageStorageContract.linkBalance();
+        expect(balanceBefore).to.equal(0);
+
+        let _url = process.env.EXTERNAL_API_URL;
+        let _path = process.env.EXTERNAL_API_PATH;
+
+        await expect(
+          messageStorageContract.updateMessage(_url, _path)
+        ).to.be.revertedWith(EVM_Insufficient_Balance);
+
+        let message = await messageStorageContract.get();
+
+        expect(message).to.equal("");
+      });
+    });
   });
 
-  it("Reverts: Insufficient LINK Balanace", async function () {
-    let balanceBefore = await messageStorageContract.linkBalance();
-    expect(balanceBefore).to.equal(0);
+  describe("Given Sufficient LINK Balanace", () => {
+    describe("When trying to update the message", () => {
+      it("Default message should have a value", async function () {
+        //Before we can do an API request, we need to fund it with LINK
+        await linkContract.transfer(
+          messageStorageContract.address,
+          "50000000000000000"
+        );
 
-    let _url = process.env.EXTERNAL_API_URL;
-    let _path = process.env.EXTERNAL_API_PATH;
+        // Validate the balance
+        let balanceBefore = await messageStorageContract.linkBalance();
+        expect(balanceBefore).to.equal("50000000000000000");
 
-    await expect(
-      messageStorageContract.updateMessage(_url, _path)
-    ).to.be.revertedWith(EVM_Insufficient_Balance);
+        // Call updateMessage & validate message
+        let _url = process.env.EXTERNAL_API_URL;
+        let _path = process.env.EXTERNAL_API_PATH;
 
-    let message = await messageStorageContract.get();
+        let _ = await messageStorageContract.updateMessage(_url, _path);
+        let message = await messageStorageContract.get();
 
-    expect(message).to.equal("");
+        expect(message).to.equal("Cats are lovely");
+      });
+    });
   });
 
-  it("Default message should have a value", async function () {
-    //Before we can do an API request, we need to fund it with LINK
-    await linkContract.transfer(messageStorageContract.address, '50000000000000000')
-    
-    // Validate the balance
-    let balanceBefore = await messageStorageContract.linkBalance();
-    expect(balanceBefore).to.equal('50000000000000000');
+  describe("Given wrong owner", () => {
+    describe("When trying to update the message", () => {
+      it("Should reverts, Owner should be the only one to update the message", async function () {
+        //Before we can do an API request, we need to fund it with LINK
+        await linkContract.transfer(
+          messageStorageContract.address,
+          "50000000000000000"
+        );
 
-    // Call updateMessage & validate message
-    let _url = process.env.EXTERNAL_API_URL;
-    let _path = process.env.EXTERNAL_API_PATH;
+        let _url = process.env.EXTERNAL_API_URL;
+        let _path = process.env.EXTERNAL_API_PATH;
 
-    let _ = await messageStorageContract.updateMessage(_url, _path);
-    let message = await messageStorageContract.get();
+        let messageBefore = await messageStorageContract.get();
 
-    expect(message).to.equal("Cats are lovely");
+        await expect(
+          messageStorageContract.connect(addr1).updateMessage(_url, _path)
+        ).to.be.revertedWith(EVM_Only_Owner);
+
+        let messageAfter = await messageStorageContract.get();
+
+        expect(messageBefore).to.equal(messageAfter);
+      });
+
+      describe("When trying to withdraw from contract", () => {
+        it("Should reverts, Owner should be the only one to withdraw", async function () {
+          let balanceBefore = await messageStorageContract.linkBalance();
+
+          await expect(
+            messageStorageContract.connect(addr1).withdrawLink()
+          ).to.be.revertedWith(EVM_Only_Owner);
+
+          let balanceAfter = await messageStorageContract.linkBalance();
+
+          expect(balanceBefore).to.equal(balanceAfter);
+        });
+      });
+    });
   });
 
-  it("Reverts: Owner should be the only one to update the message", async function () {
-    //Before we can do an API request, we need to fund it with LINK
-    await linkContract.transfer(messageStorageContract.address, '50000000000000000')
+  describe("Given correct owner", () => {
+    describe("When trying to withdraw from contract", () => {
+      it("Withdraw balance should be zero", async function () {
+        //Before we can do an API request, we need to fund it with LINK
+        await linkContract.transfer(
+          messageStorageContract.address,
+          "50000000000000000"
+        );
 
-    let _url = process.env.EXTERNAL_API_URL;
-    let _path = process.env.EXTERNAL_API_PATH;
+        // Validate the balance
+        let balanceBefore = await messageStorageContract.linkBalance();
+        expect(balanceBefore).to.equal("50000000000000000");
 
-    let messageBefore = await messageStorageContract.get();
+        // Withdraw
+        await messageStorageContract.withdrawLink();
 
-    await expect(
-      messageStorageContract.connect(addr1).updateMessage(_url, _path)
-    ).to.be.revertedWith(EVM_Only_Owner);
+        let balanceAfter = await messageStorageContract.linkBalance();
 
-    let messageAfter = await messageStorageContract.get();
-
-    expect(messageBefore).to.equal(messageAfter);
-  });
-
-  it("Reverts: Owner should be the only one to withdraw", async function () {
-    let balanceBefore = await messageStorageContract.linkBalance();
-
-    await expect(
-      messageStorageContract.connect(addr1).withdrawLink()
-    ).to.be.revertedWith(EVM_Only_Owner);
-
-    let balanceAfter = await messageStorageContract.linkBalance();
-
-    expect(balanceBefore).to.equal(balanceAfter);
-  });
-
-  it("Withdraw balance should be zero", async function () {
-    //Before we can do an API request, we need to fund it with LINK
-    await linkContract.transfer(messageStorageContract.address, '50000000000000000')
-    
-    // Validate the balance
-    let balanceBefore = await messageStorageContract.linkBalance();
-    expect(balanceBefore).to.equal('50000000000000000');
-
-    // Withdraw
-    await messageStorageContract.withdrawLink()
-
-    let balanceAfter = await messageStorageContract.linkBalance();
-
-    expect(balanceAfter).to.equal('0');
+        expect(balanceAfter).to.equal("0");
+      });
+    });
   });
 });

@@ -29,7 +29,6 @@ contract MockMessageStorage is ChainlinkClient, ConfirmedOwner{
     }
 
     function updateMessage(string calldata _url, string calldata _path) public onlyOwner returns (bytes32 requestId) {
-        console.log("Balance ---- >", getLinkBalance(), fee);
         require(getLinkBalance() >= fee, "Insufficient LINK Balance");
 
         _url;

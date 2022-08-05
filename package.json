@@ -4,7 +4,9 @@
   "description": "a smart contract that retrieves a text from a real-world API and stores it on the Ethereum blockchain",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx hardhat test",
+    "execute": "npx hardhat run scripts/run.js --network rinkeby",
+    "deploy": "npx hardhat run scripts/deploy.js --network rinkeby"
   },
   "keywords": [
     "Solidity",

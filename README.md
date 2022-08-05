@@ -1,26 +1,52 @@
 # Message Storage
 
-## Gas Optimization
+The purpose of this smart contract to retrieves a text from a real-world API and stores it on the Ethereum blockchain.
 
-### Using String
+  - [Assumptions](#assumptions)
+  - [Enviroment variables](#enviroment-variables)
+  - [Interact with the deployed smart-contract](#interact-with-the-deployed-smart-contract)
+  - [Run Tests](#run-tests)
+  - [Run Deploy](#run-deploy)
+  - [Tools](#tools)
 
-|  Methods         |||||||
-|------------------|----------|--------------|-------------|-------------|---------------|-------------|
-|  Contract        |  Method  |  Min         |  Max        |  Avg        |  # calls      |  eur (avg)  |
-|  MessageStorage  |  update  |           -  |         -   |  **36544**  |            1  |        -    |
-|  Deployments     |          |              |             |             |  % of limit   |             |
-|  MessageStorage  |          |           -  |         -   |    559122   |       1.9 %   |        -    |
+## Assumptions
+* Using https://www.quicknode.com/ to call the ETH Rinkeby testnet.
 
-### Using calldata instead of memory
+## Enviroment variables
+* PORT=`[running port]`
+* ETH_API_URL=`[Blockchain public endpoint]`
+* ETH_PRIVATE_KEY=`[Account private key to sign the transactions]`
+* ETH_ACCOUNT=`[Sender account address]`
+* DEV_RINKEBY_KEY=`[Rinkeby test network key]`
+* PROD_MAINNET_KEY=`[Mainnet network key]`
+* PRIVATE_KEY=`[Private Key]`
+* CHAINLINK_TOKEN_ADDRESS=`[Chainlink LINK token address]`
+* CHAINLINK_ORACLE_ADDRESS=`[Chainlink Oracle address]`
+* CHAINLINK_JOBID=`[Chainlink Job ID]`
+* EXTERNAL_API_URL=`[External API URL]`
+* EXTERNAL_API_PATH=`[External API Path]`
+
+
+## Interact with the deployed smart-contract
+* Smart-contract [address](https://rinkeby.etherscan.io/address/0xD841b6e9479E708735C51dea7EC5Ba165EA523c9)
+  * Get balance
+  * Update message
+```bash
+npm run execute
 ```
-// Storing information inside calldata is always less expensive than storing it on memory
 
-function update(string calldata newMessage) public onlyOwner {}
+## Run Tests
+* Run unit-test cases aginist the moked smart-contracts
+  * [MockLink](contracts/mocks/MockLink.sol)
+  * [MockMessageStorage](contracts/mocks/MockMessageStorage.sol)
+```bash
+npm run test
 ```
 
-|  Methods         |||||||
-|------------------|----------|--------------|-------------|-------------|---------------|-------------|
-|  Contract        |  Method  |  Min         |  Max        |  Avg        |  # calls      |  eur (avg)  |
-|  MessageStorage  |  update  |           -  |         -   |  **35906**  |            1  |        -    |
-|  Deployments     |          |              |             |             |  % of limit   |             |
-|  MessageStorage  |          |           -  |         -   |    538067   |       1.8 %   |        -    |
+## Run Deploy
+* Deploy the contract to Rinkeby test network
+
+## Tools
+  * Solidity
+  * Hardhat
+  * Chainlink [Get > Bytes](https://github.com/translucent-link/chainlink-node-jobs/tree/main/ethereum-rinkeby/Get%20%3E%20Bytes)
