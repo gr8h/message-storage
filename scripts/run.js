@@ -14,8 +14,8 @@ async function main() {
 	let _url = process.env.EXTERNAL_API_URL; //'https://catfact.ninja/fact?max_length=32';
 	let _path = process.env.EXTERNAL_API_PATH; //'fact'
 
-	//let requestId = await messageStorageContract.updateMessage(_url, _path);
-	//console.log("RequestId:", requestId);
+	let requestId = await messageStorageContract.updateMessage(_url, _path);
+	console.log("RequestId:", requestId);
 
 	let message = await messageStorageContract.get();
 	console.log("Current message:", message);

@@ -6,7 +6,7 @@ import "hardhat/console.sol";
 import '@chainlink/contracts/src/v0.8/ChainlinkClient.sol';
 import '@chainlink/contracts/src/v0.8/ConfirmedOwner.sol';
 
-contract MessageStorage is ChainlinkClient, ConfirmedOwner{
+contract MockMessageStorage is ChainlinkClient, ConfirmedOwner{
     using Chainlink for Chainlink.Request;
 
     // Variables
@@ -17,6 +17,7 @@ contract MessageStorage is ChainlinkClient, ConfirmedOwner{
 
     // Events
     event UpdatedMessages(bytes32 indexed requestId, bytes message);
+    event SendMessages(bytes32 indexed requestId, bytes message);
 
     // Functions
     constructor(address _chainlinkToken, address _chainlinkOracle, string memory _jobId) ConfirmedOwner(msg.sender) {
@@ -28,22 +29,21 @@ contract MessageStorage is ChainlinkClient, ConfirmedOwner{
     }
 
     function updateMessage(string calldata _url, string calldata _path) public onlyOwner returns (bytes32 requestId) {
+        console.log("Balance ---- >", getLinkBalance(), fee);
         require(getLinkBalance() >= fee, "Insufficient LINK Balance");
 
-        Chainlink.Request memory req = buildChainlinkRequest(jobId, address(this), this.returnedMessage.selector);
-
-        // Set the URL to perform the GET request on
-        req.add('get', _url);
-        req.add('path', _path);
+        _url;
+        _path;
         
-        // Sends the request
-        return sendOperatorRequest(req, fee);
+        message = "Cats are lovely";
+        emit UpdatedMessages('', message);
+        return '';
     }
 
     function returnedMessage(bytes32 _requestId, bytes calldata _message) public recordChainlinkFulfillment(_requestId) {
         message = _message;
 
-        emit UpdatedMessages(_requestId, _message);
+        emit UpdatedMessages('', _message);
     }
 
     function linkBalance() public view returns(uint256){
@@ -51,8 +51,7 @@ contract MessageStorage is ChainlinkClient, ConfirmedOwner{
     }
 
     function withdrawLink() public onlyOwner {
-        LinkTokenInterface link = LinkTokenInterface(chainlinkTokenAddress());
-        require(link.transfer(msg.sender, link.balanceOf(address(this))), 'Unable to transfer');
+
     }
 
     function get() public view returns (string memory) {
