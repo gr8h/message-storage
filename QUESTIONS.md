@@ -43,7 +43,7 @@
     - Integration testing aginist the external API
     - The dependancy on the oracle should be tested
 
-Ref: [Test](https://blog.chain.link/testing-chainlink-smart-contracts/)
+##### Ref: [Test](https://blog.chain.link/testing-chainlink-smart-contracts/)
 -------------
 ## Security risks
 -------------
@@ -59,7 +59,7 @@ Ref: [Test](https://blog.chain.link/testing-chainlink-smart-contracts/)
         - How participants are incentivized and what sort of misbehavior if left unpunished
         - Participants providing (valid) data to the oracle system are economically rewarded
 
-Ref: [oracle-manipulation](https://consensys.github.io/smart-contract-best-practices/attacks/oracle-manipulation/)
+##### Ref: [oracle-manipulation](https://consensys.github.io/smart-contract-best-practices/attacks/oracle-manipulation/)
 -------------
 ## Monitization
 -------------
@@ -71,6 +71,13 @@ Ref: [oracle-manipulation](https://consensys.github.io/smart-contract-best-pract
 -------------
 ## Other
 -------------
-- If you can fit your data in 32 bytes, then you should use bytes32 datatype rather than bytes or strings as it is much cheaper in solidity. Basically, Any fixed size variable in solidity is cheaper than variable size.
-- Storing information inside calldata is always less expensive than storing it on memory, but it has a clear downside to it. When calldata is used, the value stored in it can’t be mutated during the function execution
-- Use bytes for arbitrary-length raw byte data and string for arbitrary-length string (UTF-8) data
+    - If you can fit your data in 32 bytes, then you should use bytes32 datatype rather than bytes or strings as it is much cheaper in solidity. Basically, Any fixed size variable in solidity is cheaper than variable size.
+    - Storing information inside calldata is always less expensive than storing it on memory, but it has a clear downside to it. When calldata is used, the value stored in it can’t be mutated during the function execution
+    - Use bytes for arbitrary-length raw byte data and string for arbitrary-length string (UTF-8) data
+
+##### Ref[1](https://coinsbench.com/advanced-gas-optimizations-tips-for-solidity-85c47f413dc5)
+##### Ref[2](https://medium.com/@MuditG/solidity-gas-optimization-tips-1658c2bf37e8)
+##### Ref[3](https://yamenmerhi.medium.com/gas-optimization-in-solidity-75945e12322f)
+##### Ref[4](https://blog.openzeppelin.com/secure-smart-contract-guidelines-the-dangers-of-price-oracles/)
+##### Ref[5](https://docs.chain.link/docs/single-word-response/)
+##### Ref[6](https://github.com/tweether-protocol/tweether)
