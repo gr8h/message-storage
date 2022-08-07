@@ -13,10 +13,6 @@ The purpose of this smart contract to retrieves a text from a real-world API and
 * Using https://www.quicknode.com/ to call the ETH Rinkeby testnet.
 
 ## Enviroment variables
-* PORT=`[running port]`
-* ETH_API_URL=`[Blockchain public endpoint]`
-* ETH_PRIVATE_KEY=`[Account private key to sign the transactions]`
-* ETH_ACCOUNT=`[Sender account address]`
 * DEV_RINKEBY_KEY=`[Rinkeby test network key]`
 * PROD_MAINNET_KEY=`[Mainnet network key]`
 * PRIVATE_KEY=`[Private Key]`
